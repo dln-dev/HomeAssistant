@@ -3,17 +3,38 @@ import speech_recognition as sr
 import datetime
 import wikipedia
 import pyjokes
+import webbrowser
+import os
+import time
+import subprocess
+#from ecapture import ecapture as ec
+import wolframalpha
+import json
+import requests
+
+# general setup
+owner = "Chewbacca"
+
+phrases = 
 
 listener = sr.Recognizer()
-#engine = pyttsx3.init()
+#engine = pyttsx3.init() #'sapi5' for MS
 #voices = enginge.getProperty('voices')
 #engine.setProperty('voice', voices[1].id)
 
-#def talk(text):
+#def speak(text):
 #    engine.say(text)
 #    enginge.runAndWait()
 
+def check_if_in_command(phrases, command):
+    match = next((phrase for phrase in phrases if phrase in command), False)
+
+    return match
+
+
 def execute_command(command):
+    match = next((phrase for phrase in phrases if phrase in command), False)
+
     if 'play' in command:
         command = command.replace("play", "")
         print("playing " + command)
@@ -44,6 +65,9 @@ def execute_command(command):
     elif 'joke' in command:
         print(pyjokes.get_joke())
 
+    elif 'say hello to' in command:
+        sayHello(command.replace("say hello to", ""))
+
     else:
         print("I'm sorry, I did not understand that command")
 
@@ -61,9 +85,10 @@ def take_command():
             command = command.lower()
             print(command)
     
-    except:
-        print("fail")
-        command = "error"
+    except Exception as e:
+        command = "I'm sorry, I did not understand that"
+        print(command)
+        print("Error: ", e)
 
     return command
 
@@ -82,7 +107,24 @@ def run_jarvis():
     return True
 
 
+def sayHello(name):
+    hour = datetime.datetime.now().hour
+    helloString = "Hello " + name + ", "
+
+    if hour >= 0 and hour < 12:
+        helloString += "good morning"
+    elif hour >= 12 and hour < 18:
+        helloString += "good afternoon"
+    else:
+        helloString += "good evening"
+
+    print(helloString)
+
+
 cont = True
+
+print("Starting up...")
+sayHello(owner)
 
 while cont:
     cont = run_jarvis()
