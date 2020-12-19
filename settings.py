@@ -6,19 +6,12 @@ PRINT = True
 # operative settings
 VOICE = "female" # male or female
 
-# name of owner to refer to
-owner = "Chewbacca"
+# assistant name
+NAME = "jarvis"
 
-# known and implemented phrases
-phrases = [
-        "play",          # play on youtube
-        "time",          # give current time
-        "kill",          # end a process
-        "wikipedia",     # check on wikipedia
-        "who is",        # check name on wikipedia
-        "tell me about", # longer wikipedia output
-        "joke",          # tell a likely nerdy joke
-        "say hello to"   # greet someone
-        ]
+# name of owner to refer to
+OWNER = "Chewbacca"
+
+NEWS_URL = "https://news.google.com/news/rss"
 
 

@@ -1,24 +1,24 @@
 from listener import take_command
 from dispatcher import execute_command
-from settings import owner
+from settings import NAME, OWNER
 
 def run_jarvis():
     command = take_command()
 
-    if 'jarvis' in command:
-        command = command.replace("jarvis", "")
+    if NAME in command:
+        command = command.replace(NAME, "")
         execute_command(command)
 
-    return not 'quit' in command
+    return 'quit' in command
 
 
-cont = True
+quit = False
 
-print("Starting up...")
+print("Starting up "+ NAME + "...")
 
-execute_command("say hello to " + owner)
+execute_command("say hello to " + OWNER)
 
-while cont:
-    cont = run_jarvis()
+while not quit:
+    quit = run_jarvis()
 
 print("quit gracefully")

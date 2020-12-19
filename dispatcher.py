@@ -1,5 +1,5 @@
 # implement functionality
-#import pyttsx3
+import pyttsx3
 import datetime
 import wikipedia
 import pyjokes
@@ -11,12 +11,17 @@ import subprocess
 import wolframalpha
 import json
 import requests
+from bs4 import BeautifulSoup as soup
+from urllib.request import urlopen
 
 # get implemented phrases
-from settings import phrases
+from phrases import phrases, PHRASES
 
 # for debugging
-from settings import DEBUG, SPEAKER, PRINT, VOICE
+from settings import DEBUG, SPEAKER, PRINT, VOICE, NEWS_URL
+
+# gets the wolfram alpha app id
+from secrets import WA_ID
 
 
 if SPEAKER:
@@ -31,41 +36,60 @@ if SPEAKER:
 
 
 def execute_command(command):
-    match = next((phrase for phrase in phrases if phrase in command), False)
+    match = next((phrase for phrase in PHRASES if phrase in command), "")
     command = output(command=command, match=match, play=False)
 
-    if match == 'play': 
+    if check_match(match, "music_phrases"): 
         output("playing", command, "now")
         print("playing " + command)
 
-    elif match == 'time' or match == 'clock':
+    elif check_match(match, "time_phrases"):
         time = datetime.datetime.now().strftime("%H:%M") #%I:%M %p
         output("the current time is", time)
 
-    elif match == 'kill':
+    elif check_match(match, "close_phrases"):
         output("closing", command, "now")
         print("os. killal " + command)
 
-    elif match == 'wikipedia':
+    elif check_match(match, "wiki_phrases"):
         output("searching wikipedia for", command)
-        info = wikipedia.summary(command, 1)
+        info = wikipedia.summary(command, 3)
         output(command=info)
 
-    elif match == 'who is':
+    elif check_match(match, "info_phrases"):
         output("searching wikipedia for information about", command)
         info = wikipedia.summary(command, 1)
         output(command=info)
 
-    elif match == 'tell me about':
-        output('looking for information about', command, "on wikipedia...") 
-        info = wikipedia.summary(command, 3)
-        print(info)
-
-    elif match == 'joke':
+    elif check_match(match, "joke_phrases"):
         output(command=pyjokes.get_joke())
 
-    elif match == 'say hello to':
+    elif check_match(match, "hello_phrases"):
         sayHello(command)
+
+    elif check_match(match, "news_phrases"):
+        with urlopen(NEWS_URL) as client:
+            xml_page = client.read()
+        
+        soup_page = soup(xml_page, "xml")
+        news_list = soup_page.findAll("item", limit=3)
+        
+        for i,news in enumerate(news_list):
+            output(str(i+1), news.title.text)
+
+    elif check_match(match, "alpha_phrases"):
+        client = wolframalpha.Client(WA_ID)
+        try:
+            received = client.query(command)
+            answer = next(received.results).text
+            output("wolfram alpha says", answer)
+        except Exception as e:
+            output(command="WA failure in :"+command+" Exception:" + str(e))
+            output("wolfram alpha cannot handle this question")
+ 
+    elif check_match(match, "reboot"):
+        output("I will reboot in 10 seconds")
+        subprocess.call(["reboot", "/l"])
 
     elif match == "":
         pass
@@ -73,6 +97,9 @@ def execute_command(command):
     else:
         print("I'm sorry, I did not understand that command")
 
+
+def check_match(match, kind):
+    return any(p in match for p in phrases[kind])
 
 
 def sayHello(name):
@@ -90,6 +117,7 @@ def sayHello(name):
 
 
 def output(prefix="", command="", suffix="", match="", play=True):
+    print(play)
     if DEBUG:
         time = datetime.datetime.now().strftime("%H:%M:%S")
         with open("DEBUG.log", "a") as debug:
