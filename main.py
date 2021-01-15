@@ -1,9 +1,9 @@
-from listener import take_command
+from listener import listen_for_name, take_command
 from dispatcher import execute_command
 from settings import NAME, OWNER
 
 def run_jarvis():
-    command = take_command()
+    command = input()#take_command()
 
     if NAME in command:
         command = command.replace(NAME, "")

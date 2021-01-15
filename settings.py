@@ -1,7 +1,9 @@
 # debugging
 DEBUG = True 
-SPEAKER = False
+SPEAKER = True 
 PRINT = True
+
+FESTIVAL = True
 
 # operative settings
 VOICE = "female" # male or female

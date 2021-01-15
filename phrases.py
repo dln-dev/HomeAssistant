@@ -8,7 +8,8 @@ phrases = {
         "joke_phrases"  : ["joke", "funny", "lighten me up", "make my day"],
         "hello_phrases" : ["say hello to", "greet", "be a gentleman to"],
         "news_phrases"  : ["news", "new", "what's up"],
-        "alpha_phrases" : ["ask", "question", "compute", "calculate", "what is"]]
+        "alpha_phrases" : ["ask", "question", "compute", "calculate", "what is"],
+        "reboot_phrases": ["reboot"]
         }
 
 # list of all supported phrases for checking

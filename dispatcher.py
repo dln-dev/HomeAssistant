@@ -1,5 +1,4 @@
 # implement functionality
-import pyttsx3
 import datetime
 import wikipedia
 import pyjokes
@@ -18,20 +17,32 @@ from urllib.request import urlopen
 from phrases import phrases, PHRASES
 
 # for debugging
-from settings import DEBUG, SPEAKER, PRINT, VOICE, NEWS_URL
+from settings import DEBUG, SPEAKER, PRINT, VOICE, NEWS_URL, FESTIVAL
 
 # gets the wolfram alpha app id
 from secrets import WA_ID
 
 
 if SPEAKER:
-    engine = pyttsx3.init() #'sapi5' for MS
-    voices = enginge.getProperty('voices')
-    engine.setProperty('voice', voices[0 if voice == "male" else 1].id)
+    if FESTIVAL:
+        import os
+
+        def speak(text):
+            speech = "festival -b '(voice_cmu_us_slt_arctic_hts)' \
+                       '(SayText \"" + text + "\")'"
+
+            os.system(speech)
+
+    else:
+        import pyttsx3
+        engine = pyttsx3.init() #'sapi5' for MS
+        voices = engine.getProperty('voices')
+        # linux uses espeak, voices are meh
+        engine.setProperty('voice', voices[10].id) #0 if voice == "male" else 1].id)
     
-    def speak(text):
-        engine.say(text)
-        enginge.runAndWait()
+        def speak(text):
+            engine.say(text)
+            engine.runAndWait()
 
 
 
@@ -87,15 +98,15 @@ def execute_command(command):
             output(command="WA failure in :"+command+" Exception:" + str(e))
             output("wolfram alpha cannot handle this question")
  
-    elif check_match(match, "reboot"):
+    elif check_match(match, "reboot_phrases"):
         output("I will reboot in 10 seconds")
-        subprocess.call(["reboot", "/l"])
+        #subprocess.call(["reboot", "now"])
 
     elif match == "":
         pass
 
     else:
-        print("I'm sorry, I did not understand that command")
+        output("I'm sorry, I did not understand that command")
 
 
 def check_match(match, kind):
@@ -117,7 +128,6 @@ def sayHello(name):
 
 
 def output(prefix="", command="", suffix="", match="", play=True):
-    print(play)
     if DEBUG:
         time = datetime.datetime.now().strftime("%H:%M:%S")
         with open("DEBUG.log", "a") as debug:

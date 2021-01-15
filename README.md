@@ -10,7 +10,7 @@ better command structure including auto removal
 
 integrate e-paper display
 
-integrate speaker
+integrate speaker, mostly done, festival works better than espeak through pyttsx3, but takes much longer for speech synthesis
 
 integrate pywhatkit
 
